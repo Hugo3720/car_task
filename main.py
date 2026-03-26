@@ -37,9 +37,35 @@ class MakeCarList:
 if __name__ == '__main__':
     with open("data.txt", "r") as f:
         data = f.readlines()
-    CarList = MakeCarList(data)
-    CarList.print_car_list()
-    print("\n")
-    CarList.sort_car_by_month("1000", "01")
-    print("\n")
-    CarList.print_car_by_number("G044NT124")
+    car_list = MakeCarList(data)  # renamed to lowercase to follow conventions
+
+    while True:
+        print("\n" + "=" * 40)
+        print("Выберите действие:")
+        print("1. Вывести весь список автомобилей")
+        print("2. Отфильтровать автомобили по году и месяцу")
+        print("3. Найти автомобиль по номеру")
+        print("4. Выход")
+        choice = input("Ваш выбор (1-4): ").strip()
+
+        if choice == "1":
+            print("\nСписок всех автомобилей:")
+            car_list.print_car_list()
+
+        elif choice == "2":
+            year = input("Введите год (например, 2023): ").strip()
+            month = input("Введите месяц (двузначное число, например, 01): ").strip()
+            print(f"\nАвтомобили за {year}.{month}:")
+            car_list.sort_car_by_month(year, month)
+
+        elif choice == "3":
+            number = input("Введите номер автомобиля (например, G044NT124): ").strip()
+            print(f"\nАвтомобиль с номером {number}:")
+            car_list.print_car_by_number(number)
+
+        elif choice == "4":
+            print("Программа завершена.")
+            break
+
+        else:
+            print("Некорректный ввод. Пожалуйста, выберите 1, 2, 3 или 4.")
