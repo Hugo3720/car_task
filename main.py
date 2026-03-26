@@ -35,11 +35,20 @@ class MakeCarList:
 
 
 if __name__ == '__main__':
-    with open("data.txt", "r") as f:
-        data = f.readlines()
-    CarList = MakeCarList(data)
-    CarList.print_car_list()
-    print("\n")
-    CarList.sort_car_by_month("1000", "01")
-    print("\n")
-    CarList.print_car_by_number("G044NT124")
+    print("Введите данные об автомобилях в формате: \"номер\" ГГГГ.ММ.ДД")
+    print("Для завершения ввода оставьте строку пустой и нажмите Enter.\n")
+
+    data_list = []
+    while True:
+        line = input("> ").strip()
+        if line == "":
+            break
+        data_list.append(line)
+
+    if not data_list:
+        print("Нет данных для работы. Программа завершена.")
+        exit()
+
+    car_list = MakeCarList(data_list)
+    car_list.print_car_list()
+
