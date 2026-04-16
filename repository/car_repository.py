@@ -24,3 +24,9 @@ class CarRepository:
             [c for c in self._cars if c.date.year == year and c.date.month == month],
             key=lambda c: c.date
         )
+
+    def filter_by_month(self, year, month):
+        return sorted(
+            [c for c in self._cars if c.date.year == year and c.date.month == month],
+            key=lambda c: c.date
+        )

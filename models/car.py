@@ -13,7 +13,7 @@ class Car:
 
     @classmethod
     def from_string(cls, data: str):
-        number_match = re.findall(r'"(.*?)"', data)
+        number_match = re.findall(r'\b[A-ZА-Я]\d{3}[A-ZА-Я]{2}\d{2,3}\b', data)
         date_match = re.findall(r'\d{4}\.\d{2}\.\d{2}', data)
 
         if not number_match:
