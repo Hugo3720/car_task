@@ -1,5 +1,8 @@
-import pytest
+"""Tests for car parser."""
+
 from datetime import datetime
+
+import pytest
 
 from models.car import Car, CarParseError
 
@@ -32,6 +35,7 @@ def test_invalid_date():
 
     with pytest.raises(CarParseError, match="Некорректная дата"):
         Car.from_string(data)
+
 
 def test_invalid_date2():
     data = "A123BC77 2023.02.29"

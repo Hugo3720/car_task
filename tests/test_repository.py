@@ -1,5 +1,8 @@
-import pytest
+"""Tests for car repository."""
+
 from datetime import datetime
+
+import pytest
 
 from repository.car_repository import CarRepository
 
@@ -16,8 +19,8 @@ def sample_data():
         "B456DE77 2023.05.15",
         "C789FG77 2023.06.01",
         "INVALID DATA",
-        "D000HH77 2023.99.99",  # некорректная дата
-        "C7899FG77 2023.06.01", # некорректный номер
+        "D000HH77 2023.99.99",
+        "C7899FG77 2023.06.01",
     ]
 
 
@@ -26,31 +29,32 @@ def test_add_from_strings_valid_and_invalid(repo, sample_data):
 
     cars = repo.get_all()
 
-    # должно добавиться только 3 валидных объекта
     assert len(cars) == 3
+    assert len(repo.get_errors()) == 3
 
 
 def test_added_objects_content(repo):
     repo.add_from_strings(["A123BC77 2023.05.10"])
 
     car = repo.get_all()[0]
-    print(car.__str__())
 
     assert car.number == "A123BC77"
     assert car.date == datetime(2023, 5, 10)
 
 
 def test_find_by_number_found(repo):
-    repo.add_from_strings([
-        "A123BC77 2023.05.10",
-        "A123BC77 2023.06.10",
-        "B456DE77 2023.05.15",
-    ])
+    repo.add_from_strings(
+        [
+            "A123BC77 2023.05.10",
+            "A123BC77 2023.06.10",
+            "B456DE77 2023.05.15",
+        ]
+    )
 
     result = repo.find_by_number("A123BC77")
 
     assert len(result) == 2
-    assert all(c.number == "A123BC77" for c in result)
+    assert all(car.number == "A123BC77" for car in result)
 
 
 def test_find_by_number_not_found(repo):
@@ -62,11 +66,13 @@ def test_find_by_number_not_found(repo):
 
 
 def test_filter_by_month(repo):
-    repo.add_from_strings([
-        "A123BC77 2023.05.20",
-        "B456DE77 2023.05.10",
-        "C789FG77 2023.06.01",
-    ])
+    repo.add_from_strings(
+        [
+            "A123BC77 2023.05.20",
+            "B456DE77 2023.05.10",
+            "C789FG77 2023.06.01",
+        ]
+    )
 
     result = repo.filter_by_month(2023, 5)
 
@@ -74,23 +80,27 @@ def test_filter_by_month(repo):
 
 
 def test_filter_by_month_sorted(repo):
-    repo.add_from_strings([
-        "A123BC77 2023.05.20",
-        "B456DE77 2023.05.10",
-        "C789FG77 2023.05.15",
-    ])
+    repo.add_from_strings(
+        [
+            "A123BC77 2023.05.20",
+            "B456DE77 2023.05.10",
+            "C789FG77 2023.05.15",
+        ]
+    )
 
     result = repo.filter_by_month(2023, 5)
 
-    dates = [c.date for c in result]
+    dates = [car.date for car in result]
 
     assert dates == sorted(dates)
 
 
 def test_filter_by_month_empty(repo):
-    repo.add_from_strings([
-        "A123BC77 2023.06.01",
-    ])
+    repo.add_from_strings(
+        [
+            "A123BC77 2023.06.01",
+        ]
+    )
 
     result = repo.filter_by_month(2023, 5)
 

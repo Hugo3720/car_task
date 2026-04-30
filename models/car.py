@@ -1,33 +1,44 @@
-import re
+"""Car domain model and parser."""
+
+from dataclasses import dataclass
 from datetime import datetime
+import re
+
+
+CAR_NUMBER_PATTERN = re.compile(r"\b[АВЕКМНОРСТУХA-Z]\d{3}[АВЕКМНОРСТУХA-Z]{2}\d{2,3}\b")
+DATE_PATTERN = re.compile(r"\d{4}\.\d{2}\.\d{2}")
+DATE_FORMAT = "%Y.%m.%d"
 
 
 class CarParseError(Exception):
-    pass
+    """Raised when a car record cannot be parsed."""
 
 
+@dataclass(frozen=True, slots=True)
 class Car:
-    def __init__(self, number: str, date: datetime):
-        self.number = number
-        self.date = date
+    """Car record with registration number and date."""
+
+    number: str
+    date: datetime
 
     @classmethod
-    def from_string(cls, data: str):
-        number_match = re.findall(r'\b[A-ZА-Я]\d{3}[A-ZА-Я]{2}\d{2,3}\b', data)
-        date_match = re.findall(r'\d{4}\.\d{2}\.\d{2}', data)
+    def from_string(cls, data: str) -> "Car":
+        """Parse a car from a string containing a number and YYYY.MM.DD date."""
+        number_match = CAR_NUMBER_PATTERN.search(data)
+        date_match = DATE_PATTERN.search(data)
 
-        if not number_match:
+        if number_match is None:
             raise CarParseError("Не найден номер")
 
-        if not date_match:
+        if date_match is None:
             raise CarParseError("Не найдена дата")
 
         try:
-            date = datetime.strptime(date_match[0], "%Y.%m.%d")
-        except ValueError:
-            raise CarParseError("Некорректная дата")
+            date = datetime.strptime(date_match.group(), DATE_FORMAT)
+        except ValueError as exc:
+            raise CarParseError("Некорректная дата") from exc
 
-        return cls(number_match[0], date)
+        return cls(number_match.group(), date)
 
-    def __str__(self):
-        return f"{self.number} {self.date.strftime('%Y.%m.%d')}"
+    def __str__(self) -> str:
+        return f"{self.number} {self.date.strftime(DATE_FORMAT)}"
